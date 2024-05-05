@@ -15,12 +15,14 @@ import { Empty } from "@/components/Empty";
 import { cn } from "@/lib/utils";
 import { UserAvatar } from "@/components/UserAvatar";
 import { BotAvatar } from "@/components/BotAvatar";
+import { useProModal } from "@/hooks/use-pro-modal";
 
 const formSchema = z.object({
   prompt: z.coerce.string().min(1, "Prompt is required"),
 });
 
 export default function ConversationPage() {
+  const proModal = useProModal();
   const [messages, setMessages] = useState<any>([]);
   const router = useRouter();
   const form = useForm<z.infer<typeof formSchema>>({
@@ -47,9 +49,10 @@ export default function ConversationPage() {
 
       setMessages((current) => [...current, userMessage, response.data]);
       form.reset();
-    } catch (error) {
-      // Todo: Open Pro Modal
-      console.log(error);
+    } catch (error: any) {
+      if (error?.response?.status === 403) {
+        proModal.onOpen();
+      }
     } finally {
       router.refresh();
     }
