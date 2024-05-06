@@ -15,6 +15,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ApiCounter } from "./ApiCounter";
+import { Badge } from "./ui/badge";
 
 const montserrat = Montserrat({ weight: "600", subsets: ["latin"] });
 
@@ -30,30 +31,35 @@ const routes = [
     icon: MessageSquare,
     href: "/conversation",
     color: "text-violet-500",
+    disabled: false,
   },
   {
     label: "Image Generation",
     icon: ImageIcon,
     href: "/image",
     color: "text-pink-700",
+    disabled: true,
   },
   {
     label: "Video Generation",
     icon: VideoIcon,
     href: "/video",
     color: "text-orange-700",
+    disabled: true,
   },
   {
     label: "Music Generation",
     icon: MusicIcon,
     href: "/music",
     color: "text-emerald-500",
+    disabled: true,
   },
   {
     label: "Code Generation",
     icon: Code,
     href: "/code",
     color: "text-green-700",
+    disabled: true,
   },
   {
     label: "Settings",
@@ -78,18 +84,25 @@ export default function Sidebar({ apiCount = 0, isPro = false }) {
         <div className="space-y-1">
           {routes.map((route) => (
             <Link
-              href={route.href}
+              href={route.disabled ? "#" : route.href}
               key={route.href}
               className={cn(
-                "text-sm group flex p-3 w-full justify-start font-medium cursor-pointer hover:text-white hover:bg-white/10 rounded-lg transition",
+                "text-sm group flex p-3 w-full justify-startcursor-pointer font-medium hover:text-white hover:bg-white/10 rounded-lg transition",
                 pathname === route.href
                   ? "text-white bg-white/10"
                   : "text-zinc-400"
               )}
             >
               <div className="flex items-center flex-1">
-                <route.icon className={cn("h-5 w-5 mr-3", route.color)} />
+                <route.icon className={cn("h-5 w-5 mr-2", route.color)} />
                 {route.label}
+              </div>
+              <div className="">
+                {route?.disabled && (
+                  <Badge className="text-[8px]" variant="premium">
+                    Coming Soon!
+                  </Badge>
+                )}
               </div>
             </Link>
           ))}
