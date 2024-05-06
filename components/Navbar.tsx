@@ -5,7 +5,7 @@ const Navbar = ({
   apiCount = 0,
   isPro,
 }: {
-  apiCount: number;
+  apiCount: number | undefined;
   isPro: boolean;
 }) => {
   return (
