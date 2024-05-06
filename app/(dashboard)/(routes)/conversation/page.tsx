@@ -108,7 +108,7 @@ export default function ConversationPage() {
             <Empty label="No conversation started yet." />
           )}
           <div className="flex flex-col-reverse gap-y-4">
-            {messages.map((message, index) => (
+            {messages.map((message: any, index: any) => (
               <div
                 key={index}
                 className={cn(
