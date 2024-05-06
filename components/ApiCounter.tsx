@@ -8,14 +8,22 @@ import { Button } from "@/components/ui/button";
 import { Zap } from "lucide-react";
 import { useProModal } from "@/hooks/use-pro-modal";
 
-export const ApiCounter = ({ count }) => {
+interface ApiCounterProps {
+  count: number;
+  isPro: boolean;
+}
+
+export const ApiCounter = ({ count, isPro = false }: ApiCounterProps) => {
   const [mounted, setMounted] = useState(false);
   const proModal = useProModal();
   useEffect(() => {
     setMounted(true);
-  });
+  }, []);
 
   if (!mounted) {
+    return null;
+  }
+  if (isPro) {
     return null;
   }
   return (

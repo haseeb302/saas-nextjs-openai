@@ -6,7 +6,13 @@ import { Sheet, SheetContent, SheetTrigger } from "./ui/sheet";
 import Sidebar from "./Sidebar";
 import { useEffect, useState } from "react";
 
-export default function MobileSidebar({ count }) {
+export default function MobileSidebar({
+  count,
+  isPro,
+}: {
+  count: number;
+  isPro: boolean;
+}) {
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
@@ -25,7 +31,7 @@ export default function MobileSidebar({ count }) {
         </Button>
       </SheetTrigger>
       <SheetContent side="left" className="p-0">
-        <Sidebar apiCount={count} />
+        <Sidebar apiCount={count} isPro={isPro} />
       </SheetContent>
     </Sheet>
   );

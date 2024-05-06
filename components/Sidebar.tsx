@@ -62,7 +62,7 @@ const routes = [
   },
 ];
 
-export default function Sidebar({ apiCount = 0 }) {
+export default function Sidebar({ apiCount = 0, isPro = false }) {
   const pathname = usePathname();
   return (
     <div className="space-y-4 py-4 flex flex-col h-full bg-[#111827] text-white">
@@ -95,7 +95,7 @@ export default function Sidebar({ apiCount = 0 }) {
           ))}
         </div>
       </div>
-      <ApiCounter count={apiCount} />
+      <ApiCounter count={apiCount} isPro={isPro} />
     </div>
   );
 }
