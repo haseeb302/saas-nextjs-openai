@@ -24,10 +24,10 @@ export async function deleteFileFromLocal(filePath: string) {
 }
 
 export async function downloadFileFromUrl(fileUrl: string) {
-  let pathUrl = "/pdfs";
-  if (process.env.NODE_ENV == "development") {
-    pathUrl = "public/pdfs";
-  }
+  let pathUrl = "uploads/pdfs";
+  // if (process.env.NODE_ENV == "development") {
+  //   pathUrl = "uploads/pdfs/";
+  // }
 
   const downloadDirectory = path.join(pathUrl);
   const pdfUrl = fileUrl + ".pdf";
