@@ -39,7 +39,7 @@ function parseResponse(data: any) {
 }
 
 export const getArticles = async (searchKeyword: string) => {
-  const searchUrl = `http://export.arxiv.org/api/query?search_query=all:${searchKeyword}&start=0&max_results=10&sortBy=submittedDate`;
+  const searchUrl = `https://export.arxiv.org/api/query?search_query=all:${searchKeyword}&start=0&max_results=10&sortBy=submittedDate`;
   const articles = await axios.get(searchUrl).then(async (response) => {
     let res: any = convert.xml2json(response?.data, {
       compact: true,
