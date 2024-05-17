@@ -49,7 +49,8 @@ export default function Page() {
       setLoading(false);
     }
     getThread();
-  });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const summarize = async () => {
     setLoading(true);
