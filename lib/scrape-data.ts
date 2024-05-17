@@ -40,29 +40,34 @@ function parseResponse(data: any) {
 }
 
 export const getArticles = async (searchKeyword: string) => {
-  const searchUrl = `http://export.arxiv.org/api/query?search_query=all:${searchKeyword}&start=0&max_results=10&sortBy=submittedDate`;
-  const articles = await axios.get(searchUrl).then(async (response) => {
-    let res: any = convert.xml2json(response?.data, {
-      compact: true,
-      ignoreDeclaration: true,
-      trim: true,
+  try {
+    const searchUrl = `http://export.arxiv.org/api/query?search_query=all:${searchKeyword}&start=0&max_results=10&sortBy=submittedDate`;
+    const articles = await axios.get(searchUrl).then(async (response) => {
+      let res: any = convert.xml2json(response?.data, {
+        compact: true,
+        ignoreDeclaration: true,
+        trim: true,
+      });
+      res = JSON.parse(res);
+      const entries = res?.feed?.entry;
+      if (entries?.length > 0) {
+        return parseResponse(entries);
+      }
+      return [];
     });
-    res = JSON.parse(res);
-    const entries = res?.feed?.entry;
-    if (entries?.length > 0) {
-      return parseResponse(entries);
-    }
-    return [];
+    return articles;
+  } catch (e) {
+    console.log(e);
+    return e;
+  }
+  // console.log(res);
+  // let parser = new Parser({
+  //   customFields: { item: [["dc:author"], { keepArray: true }] },
+  // });
+  // const feed = await parser.parseString(response.data);
+  // const feed = htmlparser2.parseFeed(response.data, { xmlMode: true });
 
-    // console.log(res);
-    // let parser = new Parser({
-    //   customFields: { item: [["dc:author"], { keepArray: true }] },
-    // });
-    // const feed = await parser.parseString(response.data);
-    // const feed = htmlparser2.parseFeed(response.data, { xmlMode: true });
-
-    // console.log(feed);
-  });
+  // console.log(feed);
   // const searchUrl = `https://arxiv.org/search/?searchtype=all&query=${searchKeyword}&abstracts=show&size=50&order=-announced_date_first`;
   // const articles = await axios
   //   .get(searchUrl)
@@ -91,5 +96,4 @@ export const getArticles = async (searchKeyword: string) => {
   //   .catch((error) => {
   //     console.error("Error fetching data:", error);
   //   });
-  return articles;
 };
