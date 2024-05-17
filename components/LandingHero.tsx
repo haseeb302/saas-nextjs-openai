@@ -18,13 +18,13 @@ export const LandingHero = () => {
     <div className="text-white font-bold py-36 text-center space-y-5">
       <div className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl space-y-5 font-extrabold">
         <h1>
-          <span className="text-purple-400"> AI Assistant </span> for
+          <span className=""> AI Research Assistant </span> for
         </h1>
 
         <div className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600">
           <Typewriter
             options={{
-              strings: ["Education", "Finance", "Healthcare", "Marketing"],
+              strings: ["Education", "ArXiv Users"],
               autoStart: true,
               loop: true,
             }}
@@ -32,7 +32,8 @@ export const LandingHero = () => {
         </div>
       </div>
       <div className="text-sm md:text-xl font-light text-zinc-400">
-        Create content using AI 10x Faster.
+        Read papers like <span className="underline">newsletters</span> 10x
+        Faster with AI
       </div>
       <div>
         <Link href={isSignedIn ? "/dashboard" : "/sign-up"}>

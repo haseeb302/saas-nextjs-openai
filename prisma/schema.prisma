@@ -8,12 +8,13 @@ datasource db {
   // directUrl = env("DIRECT_URL")
 }
 
-model UserApiLimit {
-  id        String   @id @default(cuid())
-  userId    String   @unique
-  count     Int      @default(0)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+model User {
+  id        String    @id @default(cuid())
+  userId    String    @unique
+  count     Int       @default(0)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  Threads   Threads[]
 }
 
 model UserSubscription {
@@ -23,4 +24,16 @@ model UserSubscription {
   stripeSubscriptionId   String?   @unique @map("stripe_subscription_id")
   stripePriceId          String?   @map("stripe_price_id")
   stripeCurrentPeriodEnd DateTime? @map("stripe_current_period_end")
+}
+
+model Threads {
+  id            String   @id @default(cuid())
+  user          User     @relation(fields: [userId], references: [userId])
+  userId        String
+  threadId      String
+  threadName    String?
+  articleTitle  String?  @default("")
+  articleAuthor String?  @default("")
+  articleLink   String?  @default("")
+  createdAt     DateTime @default(now())
 }

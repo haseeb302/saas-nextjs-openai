@@ -27,8 +27,8 @@ export const ApiCounter = ({ count, isPro = false }: ApiCounterProps) => {
     return null;
   }
   return (
-    <div className="px-3">
-      <Card className="bg-white/10 border-0">
+    <div className="px-3 mb-2">
+      <Card className="bg-black/80 border-0">
         <CardContent className="py-6">
           <div className="text-center text-sm text-white mb-4 space-y-2">
             <p>

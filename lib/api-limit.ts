@@ -10,17 +10,17 @@ export const increaseApiLimit = async () => {
     return;
   }
 
-  const userApiLimit = await prismadb.userApiLimit.findUnique({
+  const userApiLimit = await prismadb.user.findUnique({
     where: { userId },
   });
 
   if (userApiLimit) {
-    await prismadb.userApiLimit.update({
+    await prismadb.user.update({
       where: { userId: userId },
       data: { count: userApiLimit.count + 1 },
     });
   } else {
-    await prismadb.userApiLimit.create({
+    await prismadb.user.create({
       data: { userId: userId, count: 1 },
     });
   }
@@ -31,7 +31,7 @@ export const checkApiLimit = async () => {
   if (!userId) {
     return false;
   }
-  const userLimit = await prismadb.userApiLimit.findUnique({
+  const userLimit = await prismadb.user.findUnique({
     where: { userId: userId },
   });
 
@@ -47,7 +47,7 @@ export const getApiLimitCount = async () => {
   if (!userId) {
     return 0;
   }
-  const userLimit = await prismadb.userApiLimit.findUnique({
+  const userLimit = await prismadb.user.findUnique({
     where: { userId },
   });
 

@@ -9,9 +9,11 @@ import { useEffect, useState } from "react";
 export default function MobileSidebar({
   count,
   isPro,
+  threads,
 }: {
   count: number;
   isPro: boolean;
+  threads: any;
 }) {
   const [isMounted, setIsMounted] = useState(false);
 
@@ -31,7 +33,7 @@ export default function MobileSidebar({
         </Button>
       </SheetTrigger>
       <SheetContent side="left" className="p-0">
-        <Sidebar apiCount={count} isPro={isPro} />
+        <Sidebar apiCount={count} isPro={isPro} threads={threads} />
       </SheetContent>
     </Sheet>
   );

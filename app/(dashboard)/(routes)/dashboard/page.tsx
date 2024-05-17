@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils";
 import {
   ArrowRight,
   Code,
+  GraduationCap,
   ImageIcon,
   MessageSquare,
   Music,
@@ -15,45 +16,45 @@ import { useRouter } from "next/navigation";
 
 const tools = [
   {
-    label: "Conversation",
-    icon: MessageSquare,
+    label: "Article Summary",
+    icon: GraduationCap,
     color: "text-violet-500",
     bgColor: "bg-violet-500/10",
-    href: "/conversation",
+    href: "/article",
     disabled: false,
   },
-  {
-    label: "Music Generation",
-    icon: Music,
-    color: "text-emerald-500",
-    bgColor: "bg-emerald-500/10",
-    href: "/music",
-    disabled: true,
-  },
-  {
-    label: "Image Generation",
-    icon: ImageIcon,
-    color: "text-pink-700",
-    bgColor: "bg-pink-700/10",
-    href: "/image",
-    disabled: true,
-  },
-  {
-    label: "Video Generation",
-    icon: VideoIcon,
-    color: "text-orange-700",
-    bgColor: "bg-orange-700/10",
-    href: "/video",
-    disabled: true,
-  },
-  {
-    label: "Code Generation",
-    icon: Code,
-    color: "text-green-700",
-    bgColor: "bg-green-700/10",
-    href: "/code",
-    disabled: true,
-  },
+  // {
+  //   label: "Music Generation",
+  //   icon: Music,
+  //   color: "text-emerald-500",
+  //   bgColor: "bg-emerald-500/10",
+  //   href: "/music",
+  //   disabled: true,
+  // },
+  // {
+  //   label: "Image Generation",
+  //   icon: ImageIcon,
+  //   color: "text-pink-700",
+  //   bgColor: "bg-pink-700/10",
+  //   href: "/image",
+  //   disabled: true,
+  // },
+  // {
+  //   label: "Video Generation",
+  //   icon: VideoIcon,
+  //   color: "text-orange-700",
+  //   bgColor: "bg-orange-700/10",
+  //   href: "/video",
+  //   disabled: true,
+  // },
+  // {
+  //   label: "Code Generation",
+  //   icon: Code,
+  //   color: "text-green-700",
+  //   bgColor: "bg-green-700/10",
+  //   href: "/code",
+  //   disabled: true,
+  // },
 ];
 
 export default function DashboardPage() {
@@ -65,7 +66,8 @@ export default function DashboardPage() {
           Explore the power of AI
         </h2>
         <p className="text-muted-foreground font-light text-sm md:text-lg text-center">
-          Chat with the smartest AI
+          Get articles from arxiv based on your keyword, and summarize using
+          latest GPT Models
         </p>
       </div>
       <div className="px-4 md:px-20 lg:px-32 space-y-4">
