@@ -50,6 +50,7 @@ export const getArticles = async (searchKeyword: string) => {
       });
       res = JSON.parse(res);
       const entries = res?.feed?.entry;
+      console.log(entries);
       if (entries?.length > 0) {
         return parseResponse(entries);
       }
