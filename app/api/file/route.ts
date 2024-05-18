@@ -14,12 +14,8 @@ async function downloadFile(url: string, directoryPath: string) {
   const fileName = path.basename(new URL(url).pathname);
 
   const filePath = path.join(directoryPath, fileName);
-  if (fs.existsSync(filePath)) {
-    fs.writeFileSync(filePath, fileBuffer);
-  } else {
-    fs.mkdirSync(directoryPath, { recursive: true });
-    fs.writeFileSync(filePath, fileBuffer);
-  }
+
+  fs.writeFileSync(filePath, fileBuffer);
 
   return filePath;
 }
@@ -29,13 +25,12 @@ export async function GET(req: Request) {
   const searchParam = new URLSearchParams(url.searchParams);
   const fileUrl = searchParam.get("fileUrl");
 
-  let pathUrl = "uploads/pdfs";
+  let directoryPath = "/tmp/";
 
-  // const downloadDirectory = path.join(pathUrl);
   const pdfUrl = fileUrl + ".pdf";
   try {
     // Download the file and get the file path
-    const filePath = await downloadFile(pdfUrl, pathUrl);
+    const filePath = await downloadFile(pdfUrl, directoryPath);
     if (filePath) {
       return NextResponse.json(filePath, { status: 200 });
     } else {

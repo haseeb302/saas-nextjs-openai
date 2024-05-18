@@ -84,7 +84,6 @@ export default function ConversationPage() {
       console.log(filePath);
       // filePath = await downloadFileFromUrl(pdfLink);
     }
-
     const data = {
       articleLink: pdfLink,
       articleTitle: title,
