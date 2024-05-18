@@ -29,6 +29,7 @@ import {
   downloadFileFromUrl,
 } from "@/lib/file-manipulation";
 import { createThreadAndUpdateDB } from "@/lib/open-ai-thread";
+import { Empty } from "@/components/Empty";
 
 const formSchema = z.object({
   keyword: z.coerce.string().min(1, "Keyword is required"),
@@ -38,6 +39,7 @@ export default function ConversationPage() {
   const proModal = useProModal();
   const [articles, setArticles] = useState<any>([]);
   const [selectingArticle, setSelectingArticle] = useState<boolean>(false);
+  const [error, setError] = useState<boolean>(false);
 
   const router = useRouter();
   const form = useForm<z.infer<typeof formSchema>>({
@@ -46,6 +48,10 @@ export default function ConversationPage() {
       keyword: "",
     },
   });
+
+  useEffect(() => {
+    setArticles(JSON.parse(localStorage.getItem("articles")));
+  }, []);
 
   // useEffect(() => {
   //   let interval = undefined;
@@ -67,13 +73,15 @@ export default function ConversationPage() {
     const { title, pdfLink, authors } = article;
     const author = authors[0]?.name;
 
-    let filePath: string | undefined = "";
+    let filePath: string = "";
 
     if (pdfLink) {
       const response = await axios.get("/api/file", {
         params: { fileUrl: pdfLink },
       });
+      console.log(response.data);
       filePath = response.data;
+      console.log(filePath);
       // filePath = await downloadFileFromUrl(pdfLink);
     }
 
@@ -85,7 +93,8 @@ export default function ConversationPage() {
 
     if (filePath) {
       const threadId = await createThreadAndUpdateDB(filePath, data);
-      await deleteFileFromLocal(filePath);
+      console.log(threadId);
+      // await deleteFileFromLocal(filePath);
       router.push(`/article/${threadId}`);
     }
 
@@ -113,6 +122,12 @@ export default function ConversationPage() {
     try {
       const recentArticles = await getArticles(values.keyword);
       console.log(recentArticles);
+      if (recentArticles?.length > 0) {
+        localStorage.removeItem("articles");
+        localStorage.setItem("articles", JSON.stringify(recentArticles));
+      } else {
+        setError(true);
+      }
       setArticles(recentArticles);
     } catch (error: any) {
       console.log(error);
@@ -166,9 +181,17 @@ export default function ConversationPage() {
         {/* <p className="text-xs text-muted-foreground mt-2 text-red-400">
           Note you can only search twice a day.
         </p> */}
-        {selectingArticle && <Loader2 className="mx-2 h-8 w-8 animate-spin" />}
+        {selectingArticle && (
+          <>
+            <p>Please wait it may take sometime.</p>
+            <Loader2 className="mx-2 h-8 w-8 animate-spin" />
+          </>
+        )}
+        {error && (
+          <p className="text-red-500 font-bold">Please try again later.</p>
+        )}
         {articles?.length > 0 ? (
-          articles.map((article: any, index: number) => (
+          articles?.map((article: any, index: number) => (
             // <Link >
             <Card className="my-3" key={index}>
               <CardHeader>
@@ -200,9 +223,7 @@ export default function ConversationPage() {
           ))
         ) : (
           <div className="flex items-center justify-center mt-20">
-            <h1 className="text-3x font-bold text-red-500">
-              No articles found, enter another keyword
-            </h1>
+            <Empty label="No articles found yet." />
           </div>
         )}
 

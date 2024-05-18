@@ -5,6 +5,7 @@ import OpenAI from "openai";
 import fs from "fs";
 import prismadb from "@/lib/prismadb";
 import { revalidatePath } from "next/cache";
+import fetch from "node-fetch";
 
 // import { increaseApiLimit, checkApiLimit } from "@/lib/api-limit";
 // import { checkSubscription } from "@/lib/subscription";
@@ -32,14 +33,14 @@ const openai = new OpenAI({
 //   return new NextResponse(JSON.stringify(docs), { status: 200 });
 // }
 
-export async function createThreadAndUpdateDB(filePath: string, data: any) {
+export async function createThreadAndUpdateDB(filePath: any, data: any) {
   const { userId } = auth();
 
   if (!userId) {
     return new NextResponse("Unauthorized", { status: 401 });
   }
+  console.log(filePath);
 
-  // Upload a file with an "assistants" purpose
   const file = await openai.files.create({
     file: fs.createReadStream(filePath),
     purpose: "assistants",
