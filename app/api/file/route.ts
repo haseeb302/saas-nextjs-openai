@@ -53,15 +53,13 @@ export async function GET(req: Request) {
 }
 
 export async function POST(req: Request) {
-  const { userId } = auth();
-  const body = await req.json();
-  const { filePath, data } = body;
-  console.log(userId);
-  if (!userId) {
-    return new NextResponse("Unauthorized", { status: 401 });
-  }
-  console.log(filePath);
   try {
+    const body = await req.json();
+    const { filePath, data } = body;
+    const { userId } = auth();
+    if (!userId) {
+      return new NextResponse("Unauthorized", { status: 401 });
+    }
     const file = await openai.files.create({
       file: fs.createReadStream(filePath),
       purpose: "assistants",
