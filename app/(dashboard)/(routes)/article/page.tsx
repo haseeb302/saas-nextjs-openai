@@ -28,7 +28,7 @@ import {
   deleteFileFromLocal,
   downloadFileFromUrl,
 } from "@/lib/file-manipulation";
-import { createThreadAndUpdateDB } from "@/lib/open-ai-thread";
+// import { createThreadAndUpdateDB } from "@/lib/open-ai-thread";
 import { Empty } from "@/components/Empty";
 
 const formSchema = z.object({
