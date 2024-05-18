@@ -15,7 +15,11 @@ async function downloadFile(url: string, directoryPath: string) {
 
   const filePath = path.join(directoryPath, fileName);
 
-  fs.writeFileSync(filePath, fileBuffer);
+  if (fs.existsSync(filePath)) {
+    fs.writeFileSync(filePath, fileBuffer);
+  } else {
+    return "";
+  }
 
   return filePath;
 }
@@ -27,13 +31,16 @@ export async function GET(req: Request) {
 
   let pathUrl = "uploads/pdfs";
 
-  const downloadDirectory = path.join(pathUrl);
+  // const downloadDirectory = path.join(pathUrl);
   const pdfUrl = fileUrl + ".pdf";
   try {
     // Download the file and get the file path
-    const filePath = await downloadFile(pdfUrl, downloadDirectory);
-    console.log("File downloaded to:", filePath);
-    return NextResponse.json(filePath, { status: 200 });
+    const filePath = await downloadFile(pdfUrl, pathUrl);
+    if (filePath) {
+      return NextResponse.json(filePath, { status: 200 });
+    } else {
+      return NextResponse.json("File not found", { status: 404 });
+    }
   } catch (error) {
     console.error("Error occurred:", error);
     return NextResponse.json(error, { status: 400 });
