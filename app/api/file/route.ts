@@ -85,11 +85,26 @@ export async function POST(req: Request) {
     data.threadId = thread.id;
     data.threadName = "Article";
 
-    const t = await prismadb.threads.create({
-      data,
+    const user = await prismadb.user.findUnique({
+      where: { userId },
     });
-    revalidatePath(`/article/${t?.id}`);
-    return new NextResponse(t?.id, { status: 200 });
+    let dbThread = null;
+    if (!user) {
+      const user = await prismadb.user.create({
+        data: { userId: userId, count: 1 },
+      });
+
+      dbThread = await prismadb.threads.create({
+        data,
+      });
+    } else {
+      dbThread = await prismadb.threads.create({
+        data,
+      });
+    }
+
+    revalidatePath(`/article/${dbThread?.id}`);
+    return new NextResponse(dbThread?.id, { status: 200 });
   } catch (e) {
     console.log(e);
     return new NextResponse(
