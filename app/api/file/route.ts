@@ -1,7 +1,15 @@
+import { auth } from "@clerk/nextjs";
+import OpenAI from "openai";
 import fs from "fs";
 import path from "path";
 import fetch from "node-fetch";
 import { NextResponse } from "next/server";
+import prismadb from "@/lib/prismadb";
+import { revalidatePath } from "next/cache";
+
+const openai = new OpenAI({
+  apiKey: process.env.OPEN_AI_KEY,
+});
 
 async function downloadFile(url: string, directoryPath: string) {
   const response = await fetch(url);
@@ -25,7 +33,8 @@ export async function GET(req: Request) {
   const searchParam = new URLSearchParams(url.searchParams);
   const fileUrl = searchParam.get("fileUrl");
 
-  let directoryPath = "/tmp/";
+  let directoryPath =
+    process.env.NODE_ENV === "development" ? "uploads/pdfs" : "/tmp/";
 
   const pdfUrl = fileUrl + ".pdf";
   try {
@@ -39,5 +48,56 @@ export async function GET(req: Request) {
   } catch (error) {
     console.error("Error occurred:", error);
     return NextResponse.json(error, { status: 400 });
+  }
+}
+
+export async function POST(req: Request) {
+  const { userId } = auth();
+  const body = await req.json();
+  const { filePath, data } = body;
+
+  if (!userId) {
+    return new NextResponse("Unauthorized", { status: 401 });
+  }
+  console.log(filePath);
+  try {
+    const file = await openai.files.create({
+      file: fs.createReadStream(filePath),
+      purpose: "assistants",
+    });
+
+    const thread = await openai.beta.threads.create({
+      messages: [
+        {
+          role: "user",
+          content: `You are a research assistant and an expert content writer with a background of Machine Learning, Deep Learning and LLMs. 
+          You will read the research paper file provided and will provide key points in the paper in a way that can be used in a newsletter. 
+          Response should be only in a valid raw JSON format and has no template literals or any other character.`,
+          attachments: [
+            {
+              file_id: file.id,
+              tools: [{ type: "file_search" }],
+            },
+          ],
+        },
+      ],
+    });
+    data.userId = userId;
+    data.threadId = thread.id;
+    data.threadName = "Article";
+
+    const t = await prismadb.threads.create({
+      data,
+    });
+    revalidatePath(`/article/${t?.id}`);
+    return new NextResponse(t?.id, { status: 200 });
+  } catch (e) {
+    console.log(e);
+    return new NextResponse(
+      "There was an error while creating thread, try again or try another file",
+      {
+        status: 400,
+      }
+    );
   }
 }

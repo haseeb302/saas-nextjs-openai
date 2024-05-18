@@ -33,46 +33,6 @@ const openai = new OpenAI({
 //   return new NextResponse(JSON.stringify(docs), { status: 200 });
 // }
 
-export async function createThreadAndUpdateDB(filePath: any, data: any) {
-  const { userId } = auth();
-
-  if (!userId) {
-    return new NextResponse("Unauthorized", { status: 401 });
-  }
-  console.log(filePath);
-
-  const file = await openai.files.create({
-    file: fs.createReadStream(filePath),
-    purpose: "assistants",
-  });
-
-  const thread = await openai.beta.threads.create({
-    messages: [
-      {
-        role: "user",
-        content: `You are a research assistant and an expert content writer with a background of Machine Learning, Deep Learning and LLMs. 
-        You will read the research paper file provided and will provide key points in the paper in a way that can be used in a newsletter. 
-        Response should be only in a valid raw JSON format and has no template literals or any other character.`,
-        attachments: [
-          {
-            file_id: file.id,
-            tools: [{ type: "file_search" }],
-          },
-        ],
-      },
-    ],
-  });
-  data.userId = userId;
-  data.threadId = thread.id;
-  data.threadName = "Article";
-
-  const t = await prismadb.threads.create({
-    data,
-  });
-  revalidatePath(`/article/${t?.id}`);
-  return t?.id;
-}
-
 export async function getThreadByID(threadId: string) {
   const { userId } = auth();
 

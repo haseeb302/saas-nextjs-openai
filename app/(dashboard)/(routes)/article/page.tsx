@@ -91,7 +91,8 @@ export default function ConversationPage() {
     };
 
     if (filePath) {
-      const threadId = await createThreadAndUpdateDB(filePath, data);
+      const response = await axios.post("/api/file", { filePath, data }); //createThreadAndUpdateDB(filePath, data);
+      const threadId = response.data;
       console.log(threadId);
       // await deleteFileFromLocal(filePath);
       router.push(`/article/${threadId}`);
