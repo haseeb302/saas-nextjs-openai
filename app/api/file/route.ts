@@ -13,7 +13,7 @@ async function downloadFile(url: string, directoryPath: string) {
 
   // const fileName = path.basename(new URL(url).pathname);
 
-  const filePath = path.join(directoryPath, "tempfile.pdf");
+  const filePath = path.join(process.cwd(), "./tempfile.pdf");
 
   fs.writeFileSync(filePath, fileBuffer);
 
