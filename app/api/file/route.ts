@@ -88,7 +88,9 @@ export async function POST(req: Request) {
     const user = await prismadb.user.findUnique({
       where: { userId },
     });
+
     let dbThread = null;
+
     if (!user) {
       const user = await prismadb.user.create({
         data: { userId: userId, count: 1 },
@@ -98,6 +100,10 @@ export async function POST(req: Request) {
         data,
       });
     } else {
+      await prismadb.user.update({
+        where: { userId: userId },
+        data: { count: user.count + 1 },
+      });
       dbThread = await prismadb.threads.create({
         data,
       });
