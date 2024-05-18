@@ -1,3 +1,4 @@
+export const maxDuration = 300;
 import { auth } from "@clerk/nextjs";
 import OpenAI from "openai";
 import fs from "fs";
