@@ -1,5 +1,5 @@
 "use client";
-
+export const maxDuration = 60;
 import Heading from "@/components/Heading";
 import { Button } from "@/components/ui/button";
 import { zodResolver } from "@hookform/resolvers/zod";
