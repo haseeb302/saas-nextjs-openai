@@ -96,7 +96,6 @@ export async function getThreadByID(threadId: string) {
     thread,
   };
 
-  console.log(threadDetails);
   return threadDetails;
 }
 

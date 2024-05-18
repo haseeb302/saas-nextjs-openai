@@ -9,7 +9,7 @@ import { useForm } from "react-hook-form";
 import * as z from "zod";
 import axios from "axios";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useProModal } from "@/hooks/use-pro-modal";
 
 import { formatRelative, subDays } from "date-fns";
@@ -47,23 +47,40 @@ export default function ConversationPage() {
     },
   });
 
+  // useEffect(() => {
+  //   let interval = undefined;
+  //   if (articles?.length <= 0) {
+  //     interval = setInterval(async () => {
+  //       const recentArticles = await getArticles("tts");
+  //       console.log(recentArticles);
+  //       setArticles(recentArticles);
+  //     }, 5000);
+  //   }
+  //   return () => clearInterval(interval);
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, []);
+
   const isLoading = form.formState.isSubmitting;
 
   const createThread = async (article: any) => {
     setSelectingArticle(true);
-    const { title, abstract, published, pdfLink, authors } = article;
+    const { title, pdfLink, authors } = article;
+    const author = authors[0]?.name;
 
     let filePath: string | undefined = "";
 
     if (pdfLink) {
-      filePath = await downloadFileFromUrl(pdfLink);
-      console.log(filePath);
+      const response = await axios.get("/api/file", {
+        params: { fileUrl: pdfLink },
+      });
+      filePath = response.data;
+      // filePath = await downloadFileFromUrl(pdfLink);
     }
 
     const data = {
       articleLink: pdfLink,
       articleTitle: title,
-      articleAuthor: authors || "",
+      articleAuthor: author || "",
     };
 
     if (filePath) {
@@ -157,9 +174,9 @@ export default function ConversationPage() {
               <CardHeader>
                 <CardTitle>{article?.title}</CardTitle>
                 <CardDescription className="text-sm text-muted-foreground font-bold">
-                  Author: {article?.authors}, et al.
+                  Author: {article?.authors[0]?.name}, et al.
                 </CardDescription>
-                <CardDescription>{article?.abstract}</CardDescription>
+                <CardDescription>{article?.summary}</CardDescription>
                 <CardDescription className="text-xs">
                   Submitted on{" "}
                   {formatRelative(

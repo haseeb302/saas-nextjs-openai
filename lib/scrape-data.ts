@@ -1,6 +1,8 @@
 "use server";
 import axios from "axios";
 import convert from "xml-js";
+import search from "arXiv-api-ts";
+import * as cheerio from "cheerio";
 
 function parseResponse(data: any) {
   let articles: any = [];
@@ -39,23 +41,47 @@ function parseResponse(data: any) {
   return articles;
 }
 
+function parseLinks(papers: any) {
+  return papers.map((paper: any) => {
+    paper.pdfLink = paper?.id?.replace(
+      "http://arxiv.org/abs/",
+      "https://arxiv.org/pdf/"
+    );
+    return paper;
+  });
+}
+
 export const getArticles = async (searchKeyword: string) => {
   try {
-    const searchUrl = `http://export.arxiv.org/api/query?search_query=all:${searchKeyword}&start=0&max_results=10&sortBy=submittedDate`;
-    const articles = await axios.get(searchUrl).then(async (response) => {
-      let res: any = convert.xml2json(response?.data, {
-        compact: true,
-        ignoreDeclaration: true,
-        trim: true,
-      });
-      res = JSON.parse(res);
-      const entries = res?.feed?.entry;
-      if (entries?.length > 0) {
-        return parseResponse(entries);
-      }
-      return [];
+    const papers = await search({
+      searchQueryParams: [
+        {
+          include: [{ name: searchKeyword }],
+        },
+      ],
+      start: 0,
+      maxResults: 10,
+      sortBy: "submittedDate",
     });
-    return articles;
+    console.log(papers.entries);
+    const papersWithLinks = parseLinks(papers?.entries);
+    // console.log(papersWithLinks);
+    // const searchUrl = `http://export.arxiv.org/api/query?search_query=${searchKeyword}&start=0&max_results=10`;
+    // const articles = await axios.get(searchUrl).then(async (response) => {
+    //   let res: any = convert.xml2json(response?.data, {
+    //     compact: true,
+    //     ignoreDeclaration: true,
+    //     trim: true,
+    //   });
+    //   res = JSON.parse(res);
+    //   const entries = res?.feed;
+    //   console.log(entries);
+    //   if (entries?.length > 0) {
+    //     return parseResponse(entries);
+    //   }
+    //   return [];
+    // });
+    return papersWithLinks;
   } catch (e) {
     console.log(e);
     return e;
