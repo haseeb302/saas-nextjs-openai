@@ -1,7 +1,7 @@
 "use server";
 import axios from "axios";
 import convert from "xml-js";
-import search from "arXiv-api-ts";
+import search from "arxiv-api-ts";
 import * as cheerio from "cheerio";
 
 function parseResponse(data: any) {
