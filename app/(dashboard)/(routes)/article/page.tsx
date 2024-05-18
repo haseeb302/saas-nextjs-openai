@@ -1,5 +1,7 @@
 "use client";
 
+export const maxDuration = 300;
+
 import Heading from "@/components/Heading";
 import { Button } from "@/components/ui/button";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -53,19 +55,6 @@ export default function ConversationPage() {
     setArticles(JSON.parse(localStorage.getItem("articles")));
   }, []);
 
-  // useEffect(() => {
-  //   let interval = undefined;
-  //   if (articles?.length <= 0) {
-  //     interval = setInterval(async () => {
-  //       const recentArticles = await getArticles("tts");
-  //       console.log(recentArticles);
-  //       setArticles(recentArticles);
-  //     }, 5000);
-  //   }
-  //   return () => clearInterval(interval);
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, []);
-
   const isLoading = form.formState.isSubmitting;
 
   const createThread = async (article: any) => {
@@ -79,9 +68,9 @@ export default function ConversationPage() {
       const response = await axios.get("/api/file", {
         params: { fileUrl: pdfLink },
       });
-      console.log(response.data);
+
       filePath = response.data;
-      console.log(filePath);
+
       // filePath = await downloadFileFromUrl(pdfLink);
     }
     const data = {
@@ -91,32 +80,13 @@ export default function ConversationPage() {
     };
 
     if (filePath) {
-      const response = await axios.post("/api/file", { filePath, data }); //createThreadAndUpdateDB(filePath, data);
+      const response = await axios.post("/api/file", { filePath, data });
       const threadId = response.data;
       console.log(threadId);
       // await deleteFileFromLocal(filePath);
       router.push(`/article/${threadId}`);
     }
-
-    // takes to new page with that article and there is a button where you generate summary and also ask questions
   };
-
-  // const getSummary = async () => {
-  //   const response = await axios.get("/api/pdfSummariser");
-  //   // console.log(response.data[0].pageContent);
-  //   console.log(response?.data?.text.value);
-  //   const parser = new DOMParser();
-  //   const html = parser.parseFromString(
-  //     response?.data?.text.value,
-  //     "text/html"
-  //   );
-  //   console.log();
-  //   const x = document.getElementById("article");
-  //   x?.append(html.body?.firstElementChild || "");
-  //   // setMessages(html.body.firstElementChild?.innerHTML);
-  // };
-
-  // const getPapers = async () => {};
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
