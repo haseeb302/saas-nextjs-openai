@@ -14,11 +14,11 @@ async function downloadFile(url: string, directoryPath: string) {
   const fileName = path.basename(new URL(url).pathname);
 
   const filePath = path.join(directoryPath, fileName);
-
   if (fs.existsSync(filePath)) {
     fs.writeFileSync(filePath, fileBuffer);
   } else {
-    return "";
+    fs.mkdirSync(directoryPath, { recursive: true });
+    fs.writeFileSync(filePath, fileBuffer);
   }
 
   return filePath;
