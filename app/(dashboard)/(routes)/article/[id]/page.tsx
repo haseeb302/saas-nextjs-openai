@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { Roboto } from "next/font/google";
 import {
   Card,
@@ -16,6 +16,7 @@ import axios from "axios";
 import { getThreadByID, getThreadResponse } from "@/lib/open-ai-thread";
 import { Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useProModal } from "@/hooks/use-pro-modal";
 
 const roboto = Roboto({
   weight: ["700"],
@@ -30,6 +31,8 @@ export default function Page() {
   const [hasSummary, setHasSummary] = useState<any>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<any>("");
+  const proModal = useProModal();
+  const router = useRouter();
 
   const params = useParams<{ id: string }>();
 
@@ -53,23 +56,27 @@ export default function Page() {
   }, []);
 
   const summarize = async () => {
-    setLoading(true);
-    const response = await axios.post("/api/pdfSummariser", {
-      threadId: openAiThread?.id,
-    });
-    if (response?.data) {
-      try {
+    try {
+      setLoading(true);
+      const response = await axios.post("/api/pdfSummariser", {
+        threadId: openAiThread?.id,
+      });
+      if (response?.data) {
         const res: any = await getThreadResponse(openAiThread?.id);
-        console.log(res);
         if (res) {
           setHasSummary(true);
           setResponse(res);
         }
         setLoading(false);
-      } catch (e) {
-        console.log(e);
-        setError(e);
       }
+    } catch (e) {
+      console.log(e);
+      if (error?.response?.status === 403) {
+        proModal.onOpen();
+      }
+      setError(e);
+    } finally {
+      router.refresh();
     }
   };
 
@@ -120,21 +127,21 @@ export default function Page() {
                   One Line Abstract{" "}
                 </h2>
                 <br />
-                <p>{response?.["One Line Abstract"]}</p>
+                <p>{response?.one_line_abstract}</p>
               </div>
               <div className="mb-5">
                 <h2 className={cn("font-bold text-2xl", roboto.className)}>
                   Introduction{" "}
                 </h2>
                 <br />
-                <p>{response?.["Introduction"]}</p>
+                <p>{response?.introduction}</p>
               </div>
               <div className="mb-5">
                 <h2 className={cn("font-bold text-2xl", roboto.className)}>
                   Summary{" "}
                 </h2>
                 <br />
-                <p>{response?.["Summary"]}</p>
+                <p>{response?.summary}</p>
               </div>
               <div className="mb-5">
                 <h2 className={cn("text-2xl font-bold", roboto.className)}>
@@ -142,24 +149,20 @@ export default function Page() {
                 </h2>
                 <br />
                 <ul className="list-disc list-inside leading-relaxed">
-                  {response?.["Key Points"]?.map((keys: any) => (
+                  {response?.key_points?.map((keys: any) => (
                     <li key={keys}>{keys}</li>
                   ))}
                 </ul>
               </div>
-              {/* <h3 className="text-xl font-bold">Achievement</h3>
+              <h3 className="text-xl font-bold">Achievement</h3>
               <br />
-              <p>
-                MMGER achieves a 26.72% relative improvement in AR accuracy and
-                a 27.55% relative reduction in ASR character error rate on the
-                multi-accent Mandarin KeSpeech dataset.
-              </p> */}
+              <p>{response?.achievements}</p>
               <div className="mb-5">
                 <h2 className={cn("text-2xl font-bold mt-4", roboto.className)}>
                   Conclusion
                 </h2>
                 <br />
-                <p>{response?.["Conclusion"]}</p>
+                <p>{response?.conclusion}</p>
               </div>
               <div className="mb-5">
                 <h2 className={cn("text-2xl font-bold mt-4", roboto.className)}>
@@ -167,9 +170,11 @@ export default function Page() {
                 </h2>
                 <br />
                 <ul className="list-disc list-inside leading-relaxed">
-                  {response?.["References"]?.map((keys: any, index: number) => (
-                    <li key={index}>{keys}</li>
-                  ))}
+                  {response?.useful_references?.map(
+                    (keys: any, index: number) => (
+                      <li key={index}>{keys}</li>
+                    )
+                  )}
                 </ul>
               </div>
             </div>

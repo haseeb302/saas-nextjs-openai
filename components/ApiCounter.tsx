@@ -23,29 +23,41 @@ export const ApiCounter = ({ count, isPro = false }: ApiCounterProps) => {
   if (!mounted) {
     return null;
   }
-  if (isPro) {
-    return null;
-  }
+
   return (
-    <div className="px-3 mb-2">
-      <Card className="bg-black/80 border-0">
-        <CardContent className="py-6">
-          <div className="text-center text-sm text-white mb-4 space-y-2">
-            <p>
-              {count} / {MAX_FREE_COUNTS} Generations
-            </p>
-            <Progress className="h-3" value={(count / MAX_FREE_COUNTS) * 100} />
+    <>
+      {isPro ? (
+        <div className="space-x-3">
+          <span className="px-4 py-1 bg-primary text-white rounded-xl">
+            Pro
+          </span>
+          <span className="font-bold text-sm">{count} Generations</span>
+        </div>
+      ) : (
+        <>
+          <div className="flex items-center gap-x-5">
+            <div className="text-center text-xs">
+              <span className="font-bold">
+                {count} / {MAX_FREE_COUNTS} Generations
+              </span>
+              <Progress
+                className="h-3"
+                value={(count / MAX_FREE_COUNTS) * 100}
+              />
+            </div>
+            <Button
+              onClick={proModal.onOpen}
+              // className="w-full"
+              variant="premium"
+              size="sm"
+              disabled
+            >
+              Upgrade
+              <Zap className="w-4 h-4 ml-2 fill-white" />
+            </Button>
           </div>
-          <Button
-            onClick={proModal.onOpen}
-            className="w-full"
-            variant="premium"
-          >
-            Upgrade
-            <Zap className="w-4 h-4 ml-2 fill-white" />
-          </Button>
-        </CardContent>
-      </Card>
-    </div>
+        </>
+      )}
+    </>
   );
 };

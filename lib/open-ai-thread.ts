@@ -46,7 +46,7 @@ export async function getThreadByID(threadId: string) {
     },
   });
 
-  let openAiThread;
+  let openAiThread: any = null;
 
   if (thread) {
     openAiThread = await openai.beta.threads.retrieve(thread?.threadId || "");
@@ -91,8 +91,9 @@ export async function getThreadResponse(threadId: string) {
       return null;
     }
     let x = messages?.data[0]?.content[0]?.text?.value;
-    x.replace(/```json\n?|```/g, "");
+    x = x.replace(/```json\n?|```/g, "");
     x = x.replace(/\\(?!["\\\/bfnrt]|u[0-9a-fA-F]{4})/g, "\\\\");
+    console.log(x);
     try {
       const parsedObject = JSON.parse(x);
       return parsedObject;

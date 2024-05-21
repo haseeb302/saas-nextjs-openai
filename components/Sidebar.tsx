@@ -89,63 +89,60 @@ export default function Sidebar({
   const pathname = usePathname();
   return (
     <div className="flex flex-col h-full text-black">
-      <div className="flex-1">
-        <Link
-          href="/dashboard"
-          className="flex items-center justify-center h-[72px] mb-3 bg-primary/90"
+      <Link
+        href="/dashboard"
+        className="flex items-center justify-center h-[72px] mb-3 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500"
+      >
+        <h1
+          className={cn(
+            "text-3xl font-extrabold py-3 px-5 rounded-lg text-white",
+            montserrat.className
+          )}
         >
-          <h1
+          ResearchAI
+        </h1>
+      </Link>
+      <div className="p-3">
+        <Link
+          href={`/article`}
+          className={
+            "text-sm group flex p-5 w-full cursor-pointer font-medium hover:text-blue-600 bg-zinc-700/30 rounded-lg transition"
+          }
+        >
+          <div className="flex items-center justify-center flex-1">
+            <PlusIcon className="h-5 w-5 mr-2" />
+            <p className="font-bold">Article</p>
+          </div>
+        </Link>
+      </div>
+      <div className="space-y-1 px-3 py-2 overflow-auto h-full">
+        {threads?.map((thread: any) => (
+          <Link
+            href={`/article/${thread.id}`}
+            key={thread.id}
             className={cn(
-              "text-3xl font-extrabold py-3 px-5 rounded-lg text-white",
-              montserrat.className
+              "text-sm group flex p-3 w-full justify-start cursor-pointer font-medium hover:text-blue-600 hover:bg-black/10 rounded-lg transition",
+              pathname === `/article/${thread.id}`
+                ? "text-black bg-black/10"
+                : "text-zinc-700"
             )}
           >
-            ResearchAI
-          </h1>
-        </Link>
-        <div className="p-3">
-          <Link
-            href={`/article`}
-            className={
-              "text-sm group flex p-5 w-full cursor-pointer font-medium hover:text-blue-600 bg-zinc-700/30 rounded-lg transition"
-            }
-          >
-            <div className="flex items-center justify-center flex-1">
-              <PlusIcon className="h-5 w-5 mr-2" />
-              <p className="font-bold">Article</p>
-            </div>
-          </Link>
-        </div>
-        <div className="space-y-1 px-3 py-2">
-          {threads?.map((thread: any) => (
-            <Link
-              href={`/article/${thread.id}`}
-              key={thread.id}
-              className={cn(
-                "text-sm group flex p-3 w-full justify-start cursor-pointer font-medium hover:text-blue-600 hover:bg-black/10 rounded-lg transition",
-                pathname === `/article/${thread.id}`
-                  ? "text-black bg-black/10"
-                  : "text-zinc-700"
-              )}
-            >
-              <div className="flex items-center flex-1">
-                <GraduationCap className="h-5 w-5 mr-2" />
-                <div className="w-44 ">
-                  <p className="truncate">{thread.articleTitle}</p>
-                </div>
+            <div className="flex items-center flex-1">
+              <GraduationCap className="h-5 w-5 mr-2" />
+              <div className="w-44 ">
+                <p className="truncate">{thread.articleTitle}</p>
               </div>
-              {/* <div className="">
+            </div>
+            {/* <div className="">
                 {route?.disabled && (
                   <Badge className="text-[8px]" variant="premium">
                     Coming Soon!
                   </Badge>
                 )}
               </div> */}
-            </Link>
-          ))}
-        </div>
+          </Link>
+        ))}
       </div>
-      <ApiCounter count={apiCount} isPro={isPro} />
     </div>
   );
 }

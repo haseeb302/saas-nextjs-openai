@@ -6,6 +6,8 @@ import fetch from "node-fetch";
 import { NextResponse } from "next/server";
 import prismadb from "@/lib/prismadb";
 import { revalidatePath } from "next/cache";
+import { checkApiLimit } from "@/lib/api-limit";
+import { checkSubscription } from "@/lib/subscription";
 
 const openai = new OpenAI({
   apiKey: process.env.OPEN_AI_KEY,
@@ -56,9 +58,18 @@ export async function POST(req: Request) {
     const body = await req.json();
     const { filePath, data } = body;
     const { userId } = auth();
+
     if (!userId) {
       return new NextResponse("Unauthorized", { status: 401 });
     }
+
+    const freeTrial = await checkApiLimit();
+    const isPro = await checkSubscription();
+
+    if (!freeTrial && !isPro) {
+      return new NextResponse("Free Trial is Expired", { status: 403 });
+    }
+
     const file = await openai.files.create({
       file: fs.createReadStream(filePath),
       purpose: "assistants",
@@ -68,9 +79,7 @@ export async function POST(req: Request) {
       messages: [
         {
           role: "user",
-          content: `You are a research assistant and an expert content writer with a background of Machine Learning, Deep Learning and LLMs. 
-          You will read the research paper file provided and will provide key points in the paper in a way that can be used in a newsletter. 
-          Response should be only in a valid raw JSON format and has no template literals or any other character.`,
+          content: `Here is my attached file. Provide a response only in JSON format.`,
           attachments: [
             {
               file_id: file.id,
@@ -99,10 +108,6 @@ export async function POST(req: Request) {
         data,
       });
     } else {
-      await prismadb.user.update({
-        where: { userId: userId },
-        data: { count: user.count + 1 },
-      });
       dbThread = await prismadb.threads.create({
         data,
       });

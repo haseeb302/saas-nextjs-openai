@@ -44,7 +44,7 @@ export const ProModal = () => {
           <DialogDescription className="text-center pt-2 space-y-2 text-zinc-900 font-medium">
             <p className="flex gap-x-2 items-center p-2 border rounded-lg font-semibold">
               <Check />
-              Get unlimited generations by subscribing to pro plan.
+              You have used all the available generations.
             </p>
           </DialogDescription>
         </DialogHeader>
@@ -53,7 +53,7 @@ export const ProModal = () => {
             size="lg"
             variant="premium"
             onClick={onSubscribe}
-            disabled={loading}
+            disabled={true}
           >
             Upgrade
             <Zap className="w-4 h-4 ml-2 fill-white" />
